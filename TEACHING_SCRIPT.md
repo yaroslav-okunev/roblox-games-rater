@@ -190,7 +190,7 @@ Rules:
 Clone the repo:
 
 ```bash
-git clone REPLACE_WITH_GITHUB_URL
+git clone https://github.com/alexzanco/roblox-games-rater.git
 cd roblox-games-rater
 python3 -m venv .venv
 source .venv/bin/activate
