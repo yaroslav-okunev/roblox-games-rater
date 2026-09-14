@@ -19,12 +19,14 @@ def load_games():
             return []
 
 
-def save_games(games):
-    """Save the updated list of games back to the JSON file."""
-    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(str(DATA_FILE), "w", encoding="utf-8") as file:
-        json.dump(games, file, indent=2, ensure_ascii=False)
-
+import os 
+def save_games(games): 
+    """Save the updated list of games back to the JSON file.""" 
+    DATA_FILE.parent.mkdir(parents=True, exist_ok=True) 
+    temp_file = DATA_FILE.with_name(DATA_FILE.name + ".tmp") 
+    with open(str(temp_file), "w", encoding="utf-8") as file: 
+        json.dump(games, file, indent=2, ensure_ascii=False) 
+    os.replace(str(temp_file), str(DATA_FILE))
 
 @app.route("/")
 def games():
