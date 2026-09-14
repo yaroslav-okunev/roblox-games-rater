@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ game.title }} | Game Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+  <main class="page">
+    <a class="back-link" href="{{ url_for('games') }}">← Back to all games</a>
+
+    <article class="details-card">
+      <p class="eyebrow">Game details</p>
+      <div id="title-row">
+        <h1 id="game-title-0">{{ game.title }}</h1>
+        <a href="{{game.roblox_url }}"><button id="btn-more">Play</button></a>
+      </div>
+      <div id="info-row">
+        <ul id="genre-list">
+          <li>Genre: {{game.genre}}</li>
+          <li>Subgenre: {{game.subgenre}}</li>
+        </ul>
+        <div id="stats">
+          <h2 id="rating-details">{{game.rating}}/10</h2>
+          <div id="stats-bottom">
+            <h2>visits:{{game.visits}}</h2>
+            <h2>likes:{{game.likes}}</h2>
+          </div>
+        </div>
+      </div>
+      <img id="game-img" src="{{game.image}}"></img>
+      <p id="game-dec">Description:{{game.description}}</p>
+      <div>
+        comment:{{game.comment}}
+      </div>
+      
+
+    </article>
+  </main>
+</body>
+
+</html>

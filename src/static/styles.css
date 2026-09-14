@@ -33,7 +33,7 @@ button:hover {
 }
 
 #game-card {
-    height: 240px;
+    height: 400px;
     width: 600px;
     border: solid;
     border-color: black;
@@ -46,3 +46,57 @@ button:hover {
 #genre-list {
     font-size: 18px;
 }
+#game-img {
+    height:200px;
+    width:100%;
+    max-width:400px;
+    display:block;
+    object-fit: cover;
+}
+#game-link-bs {
+    font-size:35px;
+}
+#btn-more {
+font-size:40px;
+width:200px;
+
+}
+#title-row{
+    display: flex;
+    gap: 40px;
+    align-items: center;    
+}
+#details-row{
+    display: flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    
+}
+#game-title-0{
+    text-align: left;
+
+}
+#rating-details{
+    text-align:right
+}
+#info-row{
+  display: flex;
+    justify-content:space-between;
+    align-items:flex-end;  
+}
+#stats{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-end;
+    
+}
+#stats-bottom{
+    display: flex;
+    gap:40px;
+}
+#game-dec{
+    white-space:pre-line;
+
+}
+
+

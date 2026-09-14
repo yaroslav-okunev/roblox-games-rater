@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    </head>
+    <body>
+        <h2>Add game</h2>
+        <form method="POST" action="{{url_for('add')}}">
+            <div>
+            <label>Title</label>
+            <input type="text" name="title" required>
+            </div>
+
+            <div>
+            <label>genre</label>
+            <input type="text" name="genre" required>
+            </div>
+
+            <div>
+            <label>sub-genre</label>
+            <input type="text" name="sub-genre">
+            </div>
+
+            <div>
+            <label>rating</label>
+            <input type="number" name="rating" required min="0" max="10">
+            </div>
+
+            <div>
+            <label>visits</label>
+            <input type="text" name="visits" required>
+            </div>
+
+            <div>
+            <label>likes</label>
+            <input type="text" name="likes" required>
+            </div>
+
+            <div>
+            <label>description</label>
+            <textarea type="text" name="description" rows="4" required></textarea>
+            </div>
+
+            <div>
+            <label>game-link</label>
+            <input type="text" name="game-link" required>
+            </div>
+
+            <div>
+            <label>image</label>
+            <input type="text" name="image" required>
+            </div>
+
+            <div>
+            <label>comment</label>
+            <input type="text" name="comment">
+            </div>
+            
+
+            <button type="submit">Add Game </button>
+
+        </form>
+    
+    </body>
+</html>
