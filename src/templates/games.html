@@ -1,28 +1,123 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    </head>
-    <body>
-        <h1>Roblox Games Rater</h1>
-        <a href="{{url_for('addgame')}}"><button id="btn-add-game">Добавить игру</button></a>
-        {% for game in games %}
-            <div id="game-card">
-                <div id = "title-row">
-                    <h2>{{game.title}}</h2>
-                    <h2>Rating:{{game.rating}}/10</h2>
-                    <span>
-                        <a id="game-link-bs" href="{{game.roblox_url}}">go play it</a>
-                    </span>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Games Rater — Рейтинг игр</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('games') }}" class="navbar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
                 </div>
-                <ul id="genre-list">
-                    <li>Genre: {{game.genre}}</li>
-                    <li>Subgenre: {{game.subgenre}}</li>
-                </ul>
-                <div id = "details-row">
-                    <img id="game-img" src="{{game.image}}"></img>
-                    <a href="{{ url_for('game_details', game_id=game.id) }}"><button id="btn-more">more</button></a> 
+                <div class="brand-info">
+                    <span class="brand-title">Roblox <span>Rater</span></span>
+                    <span class="brand-subtitle">Каталог и оценки сообщества</span>
                 </div>
+            </a>
+            <a href="{{ url_for('addgame') }}" class="btn btn-primary" id="btn-add-game">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                Добавить игру
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <div class="page-header">
+            <div class="page-title-group">
+                <h1>Каталог игр Roblox</h1>
+                <p>Откройте для себя популярные режимы, проверенные рейтинги и отзывы игроков</p>
             </div>
-        {% endfor %}
-    </body>
+        </div>
+
+        {% if games %}
+        <div class="games-grid">
+            {% for game in games %}
+            <article class="game-card" id="game-card">
+                <div class="card-media">
+                    {% if game.image %}
+                        <img src="{{ game.image }}" alt="{{ game.title }}" id="game-img" loading="lazy" onerror="this.src='https://placehold.co/600x338/f1f5f9/94a3b8?text=No+Image';">
+                    {% else %}
+                        <img src="https://placehold.co/600x338/f1f5f9/94a3b8?text=No+Image" alt="{{ game.title }}" id="game-img">
+                    {% endif %}
+                    <div class="rating-badge">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                        <span>{{ game.rating }}/10</span>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <h2 class="card-title">{{ game.title }}</h2>
+
+                    <div class="tags-row">
+                        {% if game.genre %}
+                            <span class="tag tag-genre">{{ game.genre }}</span>
+                        {% endif %}
+                        {% if game.subgenre %}
+                            <span class="tag tag-subgenre">{{ game.subgenre }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-item" title="Количество посещений">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                            <span class="stat-value">{{ game.visits if game.visits else '—' }}</span>
+                        </div>
+                        <div class="stat-item" title="Понравилось">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+                            </svg>
+                            <span class="stat-value">{{ game.likes if game.likes else '—' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <a href="{{ url_for('game_details', game_id=game.id) }}" class="btn btn-outline btn-sm">
+                            Подробнее
+                        </a>
+                        {% if game.roblox_url %}
+                            <a href="{{ game.roblox_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                                Играть
+                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; margin-left: 2px;">
+                                    <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                                </svg>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+            </div>
+            <h3>Пока нет добавленных игр</h3>
+            <p>Будьте первым, кто добавит классную игру из Roblox в наш каталог!</p>
+            <a href="{{ url_for('addgame') }}" class="btn btn-primary">
+                Добавить первую игру
+            </a>
+        </div>
+        {% endif %}
+    </main>
+</body>
 </html>

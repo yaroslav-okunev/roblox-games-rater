@@ -1,64 +1,165 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    </head>
-    <body>
-        <h2>Add game</h2>
-        <form method="POST" action="{{url_for('add')}}">
-            <div>
-            <label>Title</label>
-            <input type="text" name="title" required>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить игру — Roblox Games Rater</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('games') }}" class="navbar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-title">Roblox <span>Rater</span></span>
+                    <span class="brand-subtitle">Каталог и оценки сообщества</span>
+                </div>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="{{ url_for('games') }}" class="back-link">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            Назад к списку игр
+        </a>
+
+        <div class="form-card">
+            <div class="form-header">
+                <h1>Добавить игру в каталог</h1>
+                <p>Заполните форму ниже, чтобы добавить режим Roblox в общий рейтинг</p>
             </div>
 
-            <div>
-            <label>genre</label>
-            <input type="text" name="genre" required>
-            </div>
+            <form method="POST" action="{{ url_for('add') }}">
+                <div class="form-body">
+                    <!-- Section: General -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                            </svg>
+                            Основная информация
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="field-title">
+                                Название игры <span class="required">*</span>
+                            </label>
+                            <input class="form-control" type="text" id="field-title" name="title" placeholder="например: Brookhaven RP" required>
+                        </div>
 
-            <div>
-            <label>sub-genre</label>
-            <input type="text" name="sub-genre">
-            </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="field-genre">
+                                    Жанр <span class="required">*</span>
+                                </label>
+                                <input class="form-control" type="text" id="field-genre" name="genre" placeholder="например: Roleplay, Shooter" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="field-subgenre">
+                                    Поджанр <span class="optional">(необязательно)</span>
+                                </label>
+                                <input class="form-control" type="text" id="field-subgenre" name="sub-genre" placeholder="например: PvE, Fighting">
+                            </div>
+                        </div>
+                    </div>
 
-            <div>
-            <label>rating</label>
-            <input type="number" name="rating" required min="0" max="10">
-            </div>
+                    <!-- Section: Metrics -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;">
+                                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                            </svg>
+                            Метрики и рейтинг
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="field-rating">
+                                    Рейтинг (от 0 до 10) <span class="required">*</span>
+                                </label>
+                                <input class="form-control" type="number" id="field-rating" name="rating" min="0" max="10" step="any" placeholder="например: 9" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="field-visits">
+                                    Количество визитов <span class="required">*</span>
+                                </label>
+                                <input class="form-control" type="text" id="field-visits" name="visits" placeholder="например: 45M+, 2.5B+" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label" for="field-likes">
+                                    Количество лайков <span class="required">*</span>
+                                </label>
+                                <input class="form-control" type="text" id="field-likes" name="likes" placeholder="например: 500K+, 1.2M+" required>
+                            </div>
+                        </div>
+                    </div>
 
-            <div>
-            <label>visits</label>
-            <input type="text" name="visits" required>
-            </div>
+                    <!-- Section: Links -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;">
+                                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                            </svg>
+                            Ссылки и медиа
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="field-game-link">
+                                Ссылка на игру в Roblox <span class="required">*</span>
+                            </label>
+                            <input class="form-control" type="url" id="field-game-link" name="game-link" placeholder="https://www.roblox.com/games/..." required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="field-image">
+                                URL обложки / изображения <span class="required">*</span>
+                            </label>
+                            <input class="form-control" type="url" id="field-image" name="image" placeholder="https://tr.rbxcdn.com/..." required>
+                        </div>
+                    </div>
 
-            <div>
-            <label>likes</label>
-            <input type="text" name="likes" required>
-            </div>
+                    <!-- Section: Content -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: currentColor;">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            Описание и личный отзыв
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="field-desc">
+                                Описание игры <span class="required">*</span>
+                            </label>
+                            <textarea class="form-control" id="field-desc" name="description" rows="4" placeholder="Краткое описание геймплея, особенностей и управления..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="field-comment">
+                                Ваш комментарий / отзыв <span class="optional">(необязательно)</span>
+                            </label>
+                            <input class="form-control" type="text" id="field-comment" name="comment" placeholder="Например: отличный баланс оружия, регулярные обновления">
+                        </div>
+                    </div>
+                </div>
 
-            <div>
-            <label>description</label>
-            <textarea type="text" name="description" rows="4" required></textarea>
-            </div>
-
-            <div>
-            <label>game-link</label>
-            <input type="text" name="game-link" required>
-            </div>
-
-            <div>
-            <label>image</label>
-            <input type="text" name="image" required>
-            </div>
-
-            <div>
-            <label>comment</label>
-            <input type="text" name="comment">
-            </div>
-            
-
-            <button type="submit">Add Game </button>
-
-        </form>
-    
-    </body>
+                <div class="form-footer">
+                    <a href="{{ url_for('games') }}" class="btn btn-outline">Отмена</a>
+                    <button type="submit" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                        Сохранить игру
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
 </html>
