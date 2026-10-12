@@ -78,7 +78,32 @@ def save_games(games):
 @app.route("/")
 def games():
     games_list = load_games()
-    return render_template("games.html", games=games_list)
+    selected_genre = request.args.get("genre", "").strip()
+
+    # Extract distinct genres and count games per genre
+    genre_counts = {}
+    for game in games_list:
+        genre_name = game.get("genre", "").strip()
+        if genre_name:
+            genre_counts[genre_name] = genre_counts.get(genre_name, 0) + 1
+
+    genres = sorted(genre_counts.keys(), key=lambda s: s.lower())
+
+    has_matches = True
+    if selected_genre:
+        has_matches = any(
+            game.get("genre", "").strip().lower() == selected_genre.lower()
+            for game in games_list
+        )
+
+    return render_template(
+        "games.html",
+        games=games_list,
+        genres=genres,
+        genre_counts=genre_counts,
+        selected_genre=selected_genre,
+        has_matches=has_matches,
+    )
 
 
 @app.route("/games/<int:game_id>")

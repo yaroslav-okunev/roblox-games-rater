@@ -42,10 +42,55 @@
             </div>
         </div>
 
+        {% if games and genres %}
+        <!-- Фильтр по жанру под заголовком -->
+        <nav class="genre-filter-wrapper" aria-label="Фильтрация по жанрам">
+            <div class="genre-filter-label">
+                <svg viewBox="0 0 24 24" class="genre-filter-icon" aria-hidden="true">
+                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                </svg>
+                <span>Жанр:</span>
+            </div>
+            <div class="genre-filter-chips" role="group" aria-label="Список жанров">
+                <a href="{{ url_for('games') }}"
+                   class="genre-chip {% if not selected_genre %}active{% endif %}"
+                   data-genre="all"
+                   role="button"
+                   aria-pressed="{% if not selected_genre %}true{% else %}false{% endif %}">
+                    <span>Все</span>
+                    <span class="chip-count">{{ games|length }}</span>
+                </a>
+                {% for genre in genres %}
+                <a href="{{ url_for('games', genre=genre) }}"
+                   class="genre-chip {% if selected_genre and selected_genre|lower == genre|lower %}active{% endif %}"
+                   data-genre="{{ genre }}"
+                   role="button"
+                   aria-pressed="{% if selected_genre and selected_genre|lower == genre|lower %}true{% else %}false{% endif %}">
+                    <span>{{ genre }}</span>
+                    <span class="chip-count">{{ genre_counts.get(genre, 0) }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </nav>
+        {% endif %}
+
         {% if games %}
-        <div class="games-grid">
+        <div id="empty-filter-state" class="empty-filter-state" {% if has_matches is not defined or has_matches %}style="display: none;"{% endif %}>
+            <div class="empty-filter-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+            <h3>Игры в жанре «<span id="empty-filter-genre">{{ selected_genre if selected_genre else '' }}</span>» не найдены</h3>
+            <p>Попробуйте выбрать другой жанр или сбросить фильтр, чтобы увидеть все игры.</p>
+            <a href="{{ url_for('games') }}" class="btn btn-secondary btn-sm" id="btn-reset-filter">
+                Показать все игры
+            </a>
+        </div>
+
+        <div class="games-grid" {% if has_matches is defined and not has_matches %}style="display: none;"{% endif %}>
             {% for game in games %}
-            <article class="game-card" id="game-card">
+            <article class="game-card" id="game-card" data-genre="{{ game.genre|default('', true) }}" {% if selected_genre and game.genre|default('', true)|lower != selected_genre|lower %}style="display: none;"{% endif %}>
                 <div class="card-media">
                     {% if game.image %}
                         <img src="{{ game.image }}" alt="{{ game.title }}" id="game-img" loading="lazy" onerror="this.src='https://placehold.co/600x338/f1f5f9/94a3b8?text=No+Image';">
@@ -65,7 +110,7 @@
 
                     <div class="tags-row">
                         {% if game.genre %}
-                            <span class="tag tag-genre">{{ game.genre }}</span>
+                            <button type="button" class="tag tag-genre tag-clickable" data-filter-genre="{{ game.genre }}" title="Фильтровать по жанру: {{ game.genre }}">{{ game.genre }}</button>
                         {% endif %}
                         {% if game.subgenre %}
                             <span class="tag tag-subgenre">{{ game.subgenre }}</span>
@@ -119,5 +164,108 @@
         </div>
         {% endif %}
     </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chips = document.querySelectorAll('.genre-chip');
+        const cards = document.querySelectorAll('.game-card');
+        const emptyFilter = document.getElementById('empty-filter-state');
+        const emptyFilterGenre = document.getElementById('empty-filter-genre');
+        const gamesGrid = document.querySelector('.games-grid');
+        const resetBtn = document.getElementById('btn-reset-filter');
+        const clickableTags = document.querySelectorAll('.tag-clickable');
+
+        function applyFilter(genre, updateUrl = true) {
+            let visibleCount = 0;
+            const normalizedGenre = (genre || 'all').trim().toLowerCase();
+
+            // Update chips active state
+            chips.forEach(chip => {
+                const chipGenre = (chip.dataset.genre || 'all').trim().toLowerCase();
+                const isActive = (chipGenre === normalizedGenre) || (normalizedGenre === 'all' && chipGenre === 'all');
+                chip.classList.toggle('active', isActive);
+                chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+
+            // Update game cards visibility
+            cards.forEach(card => {
+                const cardGenre = (card.dataset.genre || '').trim().toLowerCase();
+                const matches = normalizedGenre === 'all' || cardGenre === normalizedGenre;
+                if (matches) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Handle empty state
+            if (emptyFilter) {
+                if (visibleCount === 0 && cards.length > 0) {
+                    emptyFilter.style.display = 'block';
+                    if (emptyFilterGenre) {
+                        emptyFilterGenre.textContent = genre;
+                    }
+                    if (gamesGrid) gamesGrid.style.display = 'none';
+                } else {
+                    emptyFilter.style.display = 'none';
+                    if (gamesGrid) gamesGrid.style.display = '';
+                }
+            }
+
+            // Sync URL parameter
+            if (updateUrl) {
+                const newUrl = new URL(window.location);
+                if (normalizedGenre === 'all') {
+                    newUrl.searchParams.delete('genre');
+                } else {
+                    newUrl.searchParams.set('genre', genre);
+                }
+                window.history.replaceState(null, '', newUrl.toString());
+            }
+        }
+
+        chips.forEach(chip => {
+            chip.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetGenre = this.dataset.genre;
+                applyFilter(targetGenre, true);
+            });
+        });
+
+        clickableTags.forEach(tag => {
+            tag.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetGenre = this.dataset.filterGenre;
+                if (targetGenre) {
+                    applyFilter(targetGenre, true);
+                    const filterWrapper = document.querySelector('.genre-filter-wrapper');
+                    if (filterWrapper) {
+                        filterWrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            });
+        });
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                applyFilter('all', true);
+            });
+        }
+
+        window.addEventListener('popstate', function () {
+            const params = new URLSearchParams(window.location.search);
+            const genre = params.get('genre') || 'all';
+            applyFilter(genre, false);
+        });
+
+        const initialParams = new URLSearchParams(window.location.search);
+        const initialGenre = initialParams.get('genre');
+        if (initialGenre) {
+            applyFilter(initialGenre, false);
+        }
+    });
+    </script>
 </body>
 </html>
